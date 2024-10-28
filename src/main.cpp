@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "lexer/include/lexer.hpp"
+
 // Функция для вывода справки
 void printHelp() {
   std::cout << "MathSol: интерпретатор для языка MathSol\n";
@@ -14,16 +16,20 @@ void printHelp() {
 
 // Функция для вывода версии
 void printVersion() {
-  std::cout << "MathSol версия 1.0\n";
+  std::cout << "MathSol версия 1.0.2\n";
 }
 
 // Функция для запуска интерактивного режима
 void runInteractiveMode() {
+  Lexer lex = Lexer();
+
   std::cout << "mathsol> ";
   std::string input;
   while (std::getline(std::cin, input)) {
     // Здесь будет реализован ваш интерпретатор
-    std::cout << "hi, this is an inteructive state\n";
+    std::vector<Token> tokens = lex.tokenize(input);
+    for (Token t : tokens) std::cout << t << " ";
+    std::cout << "\n";
     std::cout << "mathsol> ";
   }
 }
@@ -35,11 +41,14 @@ void runFile(const std::string& fileName) {
     std::cerr << "Ошибка: не удалось открыть файл " << fileName << "\n";
     return;
   }
-
+  
+  Lexer lex = Lexer();
   std::string line;
   while (std::getline(file, line)) {
-    // Здесь будет реализован ваш интерпретатор
     std::cout << line << "\n";
+    std::vector<Token> tokens = lex.tokenize(line);
+    for (Token t : tokens) std::cout << t << " ";
+    std::cout << "\n";
   }
   file.close();
 }

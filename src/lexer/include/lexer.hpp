@@ -1,16 +1,15 @@
-#ifndef LEXER_HPP
-#define LEXER_HPP
-
+#pragma once
 #include <vector>
 #include "token.hpp"
 
 class Lexer {
 public:
-  Lexer(const std::string& sourceCode);
-  std::vector<Token> tokenize();
+  Lexer();
+  std::vector<Token> tokenize(const std::string& sourceCode);
 
 private:
-  std::string sourceCode_;
-};
+  std::vector<Token> tokens_;
 
-#endif  // LEXER_HPP
+  Token scan_next_(const std::string& sourceCode, int& iter);
+  Token scan_const_(const std::string& sourceCode, int& iter, std::string& value);
+};

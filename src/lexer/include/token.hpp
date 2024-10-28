@@ -1,6 +1,4 @@
-#ifndef TOKEN_HPP
-#define TOKEN_HPP
-
+#pragma once
 #include <iostream>
 #include <string>
 
@@ -16,6 +14,9 @@ enum class TokenType {
   KEYWORD_FALSE,
   KEYWORD_NULL,
   KEYWORD_INF,
+  KEYWORD_AND,          // 'and'
+  KEYWORD_OR,           // 'or'
+  KEYWORD_NOT,          // 'not'
 
   // Операторы
   OPERATOR_PLUS,        // +
@@ -38,9 +39,9 @@ enum class TokenType {
   OPERATOR_LE,          // <=
   OPERATOR_GT,          // >
   OPERATOR_GE,          // >=
-  OPERATOR_AND,         // && or 'and'
-  OPERATOR_OR,          // || or 'or'
-  OPERATOR_NOT,         // !  or 'not'
+  OPERATOR_AND,         // &&
+  OPERATOR_OR,          // ||
+  OPERATOR_NOT,         // !
   
   // Разделители
   DELIMITER_LBRACKET,   // (
@@ -66,7 +67,8 @@ enum class TokenType {
   IDENTIFIER,
 
   // Конец файла
-  END_OF_FILE,
+  _EOF,
+  EOL,
 
   // Ошибка
   ERROR
@@ -84,6 +86,9 @@ const std::string nameTT [] = {
   "KEYWORD_FALSE",
   "KEYWORD_NULL",
   "KEYWORD_INF",
+  "KEYWORD_AND",         // 'and'
+  "KEYWORD_OR",          // 'or'
+  "KEYWORD_NOT",         // 'not'
 
   // Операторы
   "OPERATOR_PLUS",        // +
@@ -106,9 +111,9 @@ const std::string nameTT [] = {
   "OPERATOR_LE",          // <=
   "OPERATOR_GT",          // >
   "OPERATOR_GE",          // >=
-  "OPERATOR_AND",         // && or 'and'
-  "OPERATOR_OR",          // || or 'or'
-  "OPERATOR_NOT",         // !  or 'not'
+  "OPERATOR_AND",         // &&
+  "OPERATOR_OR",          // ||
+  "OPERATOR_NOT",         // !
   
   // Разделители
   "DELIMITER_LBRACKET",   // (
@@ -134,25 +139,103 @@ const std::string nameTT [] = {
   "IDENTIFIER",
 
   // Конец файла
-  "END_OF_FILE",
+  "EOF",
+  "EOL",
 
   // Ошибка
   "ERROR"
 };
 
+const std::string valueTT [] = {
+  // Ключевые слова
+  "if",               // KEYWORD_IF
+  "else",             // KEYWORD_ELSE
+  "while",            // KEYWORD_WHILE
+  "for",              // KEYWORD_FOR
+  "func",
+  "return",
+  "true",
+  "false",
+  "null",
+  "inf",
+  "and",
+  "or",
+  "not",
+
+  // Операторы
+  "+",
+  "-",
+  "*",
+  "/",
+  "%",
+  "**",
+  "++",
+  "--",
+  "+=",
+  "-=",
+  "*=",
+  "/=",
+
+  "=",   
+  "==",  
+  "!=", 
+  "<",  
+  "<=", 
+  ">",
+  ">=",  
+  "&&",  
+  "||", 
+  "!", 
+  
+  // Разделители
+  "(",
+  ")",   // )
+  "[", // [
+  "]", // ]
+  "{",  // {
+  "}",  // }
+  ";",  // ;
+  ":",      // :
+  ",",      // ,
+  ".",        // .
+  "..",       // ..
+  "...",   // ...
+  "?",   // ?
+  "#",    // #
+
+  // Константы
+  "",      // number
+  "",      // string
+
+  // Идентификаторы
+  "",   // identifier
+
+  // Конец файла
+  "",   // EOF
+  "\n",
+
+  // Ошибка
+  ""    // ERROR
+};
+
+
 class Token {
 public:
+  Token(TokenType type)
+    : type_(type), value_() {}
+    
   Token(TokenType type, std::string value)
     : type_(type), value_(value) {}
 
   TokenType getType() const { return type_; }
   std::string getValue() const { return value_; }
-  std::ostream& operator << (std::ostream& outs) { return outs << "[" << nameTT[static_cast<int>(type_)] << ": " << value_ << "]"; }
+  
+  friend bool operator==(const Token& lhs, const Token& rhs) { return lhs.getType() == rhs.getType(); }
+  friend bool operator!=(const Token& lhs, const Token& rhs) { return lhs.getType() != rhs.getType(); }
 
 private:
   TokenType type_;
   std::string value_;
 };
 
-
-#endif  // TOKEN_HPP
+std::ostream& operator << (std::ostream& outs, const Token& t);
