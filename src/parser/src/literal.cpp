@@ -1,4 +1,4 @@
-#pragma once
+#include "literal.hpp"
 
 template<typename T>
 T Literal<T>::value() {

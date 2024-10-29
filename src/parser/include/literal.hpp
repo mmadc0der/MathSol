@@ -20,5 +20,3 @@ class Literal : public ILiteral<T> {
     T value_ = nullptr;
     T parse_(const std::string& source);
 };
-
-#include "literal.ipp"
