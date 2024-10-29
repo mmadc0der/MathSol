@@ -5,7 +5,7 @@
 
 #include "lexer/include/lexer.hpp"
 
-#define VERSION "0.0.3"
+#define VERSION "0.0.4"
 
 // Help information [-h, --help]
 void printHelp() {

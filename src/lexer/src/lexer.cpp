@@ -38,7 +38,7 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
     if (valid_tokens.size() == 1) {
       iter++;
       std::string target_value = valueTT[*(valid_tokens.begin())];
-      Token current_token = scan_const_(sourceCode, iter, value);
+      Token current_token = scan_const_or_id_(sourceCode, iter, value);
       if (target_value == current_token.getValue()) return Token(static_cast<TokenType>(*(valid_tokens.begin())), value);
       else return current_token;
     }
@@ -50,33 +50,52 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
       if (valueTT[i] == value) return Token(static_cast<TokenType>(i), value);
     }
   }
-  return scan_const_(sourceCode, iter, value);
+  return scan_const_or_id_(sourceCode, iter, value);
 }
 
 
-Token Lexer::scan_const_(const std::string& sourceCode, int& iter, std::string& value) {  
-  TokenType type = TokenType::CONSTANT_NUM;
-  for (char c : value) if (c < '0' || c > '9') {
-    type = TokenType::CONSTANT_STRING;
-    break;
-  }
-  
-  while (iter <= sourceCode.size()) {
-    if (type == TokenType::CONSTANT_NUM) {
+Token Lexer::scan_const_or_id_(const std::string& sourceCode, int& iter, std::string& value) {
+  TokenType tt = TokenType::ERROR;
+  if (value[0] >= '0' && value[0] <= '9') {                   // CONSTANT_NUM
+    tt = TokenType::CONSTANT_NUM;
+    bool doted = false;
+    while (iter < sourceCode.size()) {
       if (sourceCode[iter] >= '0' && sourceCode[iter] <= '9') value += sourceCode[iter];
+      else if (sourceCode[iter] == '.' && !doted) {
+        value += sourceCode[iter];
+        doted = true;
+      }
       else return Token(TokenType::CONSTANT_NUM, value);
-    } else {
+      iter++;
+    }
+  } else if (value[0] == '\'' || value[0] == '\"') {         // CONSTANT_STRING
+    tt = TokenType::CONSTANT_STRING;
+    char opener = value[0];
+    while (iter <= sourceCode.size()) {
+      if (sourceCode[iter] != opener) value += sourceCode[iter];
+      else {
+        value += sourceCode[iter];
+        iter++;
+        return Token(TokenType::CONSTANT_STRING, value);
+      }
+      iter++;
+    }
+  } else if (value[0] == '_'                                  // IDENTIFIER
+    || (value[0] >= 'A' && value[0] <= 'Z') 
+    || (value[0] >= 'a' && value[0] <= 'z')) {
+    while (iter <= sourceCode.size()) {
+      tt = TokenType::IDENTIFIER;
       if (sourceCode[iter] == '-' 
         || sourceCode[iter] == '_' 
         || (sourceCode[iter] >= 'A' && sourceCode[iter] <= 'Z') 
         || (sourceCode[iter] >= 'a' && sourceCode[iter] <= 'z')
         || (sourceCode[iter] >= '0' && sourceCode[iter] <= '9')) 
       value += sourceCode[iter];
-      else return Token(TokenType::CONSTANT_STRING, value);
+      else return Token(TokenType::IDENTIFIER, value);
+      iter++;
     }
-    iter++;
   }
-  return Token(type, value);  
+  return Token(tt, value);  
 }
 
 
