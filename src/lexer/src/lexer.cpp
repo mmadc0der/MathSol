@@ -56,7 +56,14 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
 
 Token Lexer::scan_const_or_id_(const std::string& sourceCode, int& iter, std::string& value) {
   TokenType tt = TokenType::ERROR;
-  if (value[0] >= '0' && value[0] <= '9') {                   // CONSTANT_NUM
+  if (value[0] == '#') {                                      // DELIMETER_COMMENT
+    tt = TokenType::DELIMETER_COMMENT;
+    while (iter < sourceCode.size()) {
+      if (sourceCode[iter] != '\n') value += sourceCode[iter];
+      else return Token(TokenType::DELIMETER_COMMENT, value);
+      iter++;
+    }
+  } else if (value[0] >= '0' && value[0] <= '9') {            // CONSTANT_NUM
     tt = TokenType::CONSTANT_NUM;
     bool doted = false;
     while (iter < sourceCode.size()) {
