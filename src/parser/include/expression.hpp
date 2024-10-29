@@ -3,6 +3,7 @@
 #include "literal.hpp"
 #include "../../lexer/include/token.hpp"
 #include <string>
+#include <variant>
 
 // Expression Interface
 template<typename T>
@@ -21,11 +22,11 @@ class LiteralExpression : public IExpression {
     Literal<T> literal_;
 };
 
-template<typename T, typename L>
+template<typename T, typename L, typename R>
 class BinaryExpression : public IExpression<T> {
   public:
     BinaryExpression(Literal<T>* left, Literal<T>* right, const Token& operator_) : left_(left), right_(right), operator_(operator_) {};
-    T evaluate() override;
+    std::variant<T, L, R> evaluate() const override;
 
   private:
     IExpression<L>* left_;
