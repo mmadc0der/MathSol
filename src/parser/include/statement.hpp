@@ -10,10 +10,10 @@ class IStatement {
 };
 
 template<typename T>
-class ExpressionStatement : public IStatement {
+class ExpressionStatement : public IStatement<T> {
   public:
     ExpressionStatement(IExpression<T>& expression_) : expression_(expression_) {};
-    void execute() const override;
+    T execute() const override;
 
   private:
     IExpression<T> expression_;
