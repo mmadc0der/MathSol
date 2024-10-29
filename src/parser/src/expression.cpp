@@ -20,12 +20,12 @@ std::variant<T, L, R> BinaryExpression<T, L, R>::evaluate() const { // TODO: hea
       result = left_value - right_value;
       break;
     case TokenType::OPERATOR_MUL: {
-      if (std::is_same(L, double)) result = left_value * right_value;
+      if (std::is_same_v(L, double)) result = left_value * right_value;
       else throw std::invalid_argument("Strings multipllication is not permited");
       break;
     }
     case TokenType::OPERATOR_DIV: {
-      if (std::is_same(L, double)) {
+      if (std::is_same_v(L, double)) {
         if (right_value != 0) result = left_value / right_value;
         else throw std::invalid_argument("Division by zero is not allowed");
       } else throw std::invalid_argument("Strings division is not permited");

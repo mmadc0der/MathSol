@@ -1,5 +1,6 @@
 # src/parser/CMakeLists.txt
 add_library(parser
+    src/literal.cpp
     src/expression.cpp
     src/statement.cpp
     src/parser.cpp
