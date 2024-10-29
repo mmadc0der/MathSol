@@ -15,7 +15,7 @@ The interpreter is used by running the executable file `mathsol.exe`.
 Below is the output for `mathsol --help`:
 
 ```bash
-MathSol v1.0.3 mathsol language interpreter
+MathSol v0.0.3 mathsol language interpreter
 (C) 2024-now madc0der
 
 Usage:

@@ -42,6 +42,7 @@ void runInteractiveMode() {
   }
 }
 
+// Execute expression [-c, --command]
 void runCommand(const std::string& command) {
   Lexer lex = Lexer();
   std::vector<Token> tokens = lex.tokenize(command);
@@ -49,7 +50,7 @@ void runCommand(const std::string& command) {
   std::cout << "\n";
 }
 
-// Функция для выполнения кода из файла
+// Execute code from file [filepath]
 void runFile(const std::string& fileName) {
   std::ifstream file(fileName);
   if (!file.is_open()) {
@@ -70,7 +71,7 @@ void runFile(const std::string& fileName) {
 
 int main(int argc, char* argv[]) {
   if (argc == 1) {
-    // Без аргументов - запуск интерактивного режима
+    // Starts interactive mode without arguments
     runInteractiveMode();
   } else if (argc == 2) {
     std::string arg = argv[1];
