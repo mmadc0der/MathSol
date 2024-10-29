@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
+
 project(mathsol)
 
-# Включаем каталог с заголовками
-include_directories(src/lexer/include)
+# Включаем общий каталог с заголовками
+include_directories(src/lexer/include src/parser/include)
 
-# Добавляем исполняемый файл и исходники
-add_executable(mathsol src/main.cpp src/lexer/src/token.cpp src/lexer/src/lexer.cpp)
+# Рекурсивно добавляем подкаталоги (модули)
+add_subdirectory(src/lexer)
+add_subdirectory(src/parser)
+
+# Объявляем исполняемый файл и связываем с ним модули
+add_executable(main src/main.cpp)
+target_link_libraries(main lexer parser)

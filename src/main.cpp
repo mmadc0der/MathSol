@@ -1,11 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-
-#include "lexer/include/lexer.hpp"
-
-#define VERSION "0.0.4"
+#include "global.hpp"
 
 // Help information [-h, --help]
 void printHelp() {
