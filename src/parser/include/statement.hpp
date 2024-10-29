@@ -12,7 +12,7 @@ class IStatement {
 template<typename T>
 class ExpressionStatement : public IStatement {
   public:
-    ExpressionStatement(IExpression<T>& expression) : expression(expression) {};
+    ExpressionStatement(IExpression<T>& expression_) : expression_(expression_) {};
     void execute() const override;
 
   private:

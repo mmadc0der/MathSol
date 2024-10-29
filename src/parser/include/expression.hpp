@@ -14,7 +14,7 @@ class IExpression {
 template<typename T, typename L, typename R>
 class BinaryExpression : public IExpression<T> {
   public:
-    BinaryExpression(Literal<T>& left, Literal<T>& right, Token& operator) : left_(left), right_(right), operator_(operator) {};
+    BinaryExpression(Literal<T>& left, Literal<T>& right, Token& operator_) : left_(left), right_(right), operator_(operator_) {};
     T evaluate() override;
 
   private:
