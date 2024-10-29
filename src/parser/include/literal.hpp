@@ -10,13 +10,14 @@ class ILiteral {
 template<typename T>
 class Literal : public ILiteral<T> {
   public:
-    Literal() : source_(""), value_(T{});
+    Literal() : source_("") {};
     Literal(const std::string& source) : source_(source) {};
   
     T value() override;
   
   private:
     std::string source_;
+    T value_ = nullptr;
     T parse_(const std::string& source);
 };
 
