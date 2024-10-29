@@ -10,7 +10,7 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
   std::string value = "";
 
   if (iter > last_index) return Token(TokenType::_EOF, "EOF");
-  while (sourceCode[iter] == ' ') iter++;
+  while (sourceCode[iter] == ' ' || sourceCode[iter] == '\t') iter++;
   value += sourceCode[iter];
 
   for (int i = 0; i < static_cast<int>(TokenType::ERROR); i++) {
@@ -20,6 +20,7 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
   iter++;
   local_index++;
   while (iter <= last_index) {
+    if (sourceCode[iter] == ' ' || sourceCode[iter] == '\t') break;
     value += sourceCode[iter];
 
     std::set<int> tokens_to_erase;
@@ -34,11 +35,14 @@ Token Lexer::scan_next_(const std::string& sourceCode, int& iter) {
     }
     for (int t : tokens_to_erase) valid_tokens.erase(t);
 
-    if (valid_tokens.size() > 1) continue;  
-    else {
+    if (valid_tokens.size() == 1) {
       iter++;
-      return Token(static_cast<TokenType>(*(valid_tokens.begin())), value);
+      std::string target_value = valueTT[*(valid_tokens.begin())];
+      Token current_token = scan_const_(sourceCode, iter, value);
+      if (target_value == current_token.getValue()) return Token(static_cast<TokenType>(*(valid_tokens.begin())), value);
+      else return current_token;
     }
+    iter++; local_index++;
   }
 
   if (valid_tokens.size() >= 1) {

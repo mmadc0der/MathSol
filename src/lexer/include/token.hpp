@@ -8,6 +8,7 @@ enum class TokenType {
   KEYWORD_ELSE,
   KEYWORD_WHILE,
   KEYWORD_FOR,
+  KEYWORD_IN,
   KEYWORD_FUNC,
   KEYWORD_RETURN,
   KEYWORD_TRUE,
@@ -80,6 +81,7 @@ const std::string nameTT [] = {
   "KEYWORD_ELSE",
   "KEYWORD_WHILE",
   "KEYWORD_FOR",
+  "KEYWORD_IN",
   "KEYWORD_FUNC",
   "KEYWORD_RETURN",
   "KEYWORD_TRUE",
@@ -152,6 +154,7 @@ const std::string valueTT [] = {
   "else",             // KEYWORD_ELSE
   "while",            // KEYWORD_WHILE
   "for",              // KEYWORD_FOR
+  "in",              // KEYWORD_IN
   "func",
   "return",
   "true",
