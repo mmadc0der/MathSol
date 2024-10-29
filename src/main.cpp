@@ -52,11 +52,13 @@ void runFile(const std::string& fileName) {
   }
   
   Lexer lex = Lexer();
+  Parser parser = Parser();
+
   std::string line;
   while (std::getline(file, line)) {
     std::cout << line << "\n";
     std::vector<Token> tokens = lex.tokenize(line);
-    for (Token t : tokens) std::cout << t << " ";
+    parser.parse(tokens);
     std::cout << "\n";
   }
   file.close();
