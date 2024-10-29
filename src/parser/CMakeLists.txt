@@ -1,6 +1,9 @@
 # src/parser/CMakeLists.txt
 add_library(parser
-    src/ast.cpp
+    src/literal.cpp
+    src/expression.cpp
+    src/statement.cpp
+    src/parser.cpp
 )
 
 # Указываем, что заголовочные файлы находятся в include
