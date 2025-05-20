@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     std::string arg = argv[1];
     if (arg == "-h" || arg == "--help") {
       printHelp();
-    } else if (arg == "-v" || arg == "--version") {
+    } else if (arg == "-V" || arg == "--version") {
       printVersion();
     } else {
       // Файл для выполнения
