@@ -71,7 +71,8 @@ enum class TokenType {
   _EOF,
   EOL,
 
-  // Ошибка
+  // Service
+  PENDING,
   ERROR
 };
 
@@ -145,6 +146,7 @@ const std::string nameTT [] = {
   "EOL",
 
   // Ошибка
+  "PENDING",
   "ERROR"
 };
 
@@ -215,9 +217,9 @@ const std::string valueTT [] = {
 
   // Конец файла
   "",   // EOF
-  "\n",
+  "\n",   // EOL
 
-  // Ошибка
+  "",    // PENDING
   ""    // ERROR
 };
 

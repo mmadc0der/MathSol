@@ -34,7 +34,7 @@ void runInteractiveMode() {
   std::string input;
   while (std::getline(std::cin, input)) {
     // Tokenize the input
-    std::vector<Token> tokens = lex.tokenize(input);
+    std::vector<Token> tokens = lex.tokenize(input + "\n");
     
     // Show tokens if requested
     if (showTokens) {
@@ -49,6 +49,14 @@ void runInteractiveMode() {
     }
     std::cout << "mathsol> ";
   }
+
+  // After the loop (e.g., on EOF), process any remaining pending tokens and get EOF
+  std::vector<Token> final_tokens = lex.eof();
+  if (showTokens && !final_tokens.empty()) {
+    for (Token t : final_tokens) std::cout << t << " ";
+    std::cout << "\n";
+  }
+  // TODO: If a parser were here, it would also need to process these final_tokens.
 }
 
 // Execute expression [-c, --command]
@@ -56,6 +64,10 @@ void runCommand(const std::string& command) {
   Lexer lex = Lexer();
   std::vector<Token> tokens = lex.tokenize(command);
   
+  // Process any remaining pending tokens and get EOF
+  std::vector<Token> eof_tokens = lex.eof();
+  tokens.insert(tokens.end(), eof_tokens.begin(), eof_tokens.end());
+
   // Show tokens if requested
   if (showTokens) {
     for (Token t : tokens) std::cout << t << " ";
@@ -84,64 +96,35 @@ void runFile(const std::string& fileName) {
   Lexer lex = Lexer();
   //Parser parser = Parser();
   
-  // Reset lexer state for fresh processing
-  lex.reset();
-  
-  // Pre-allocate token vector
   std::vector<Token> allTokens;
-  allTokens.reserve(1000); // Initial capacity
+  allTokens.reserve(256); // Initial capacity
   
   // Buffer for reading chunks
   char buffer[CHUNK_BUFFER_SIZE];
-  bool isEOF = false;
   
-  // Line counter for display
-  int lineCount = 1;
-  std::string currentLine;
-  
-  // Process file in chunks
-  while (!isEOF) {
+  // Process file in chunks for tokenisation
+  while (!file.eof()) {
     // Read next chunk
     file.read(buffer, CHUNK_BUFFER_SIZE - 1);
     std::streamsize bytesRead = file.gcount();
-    buffer[bytesRead] = '\0'; // Null-terminate the buffer
     
-    // Check if this is the last chunk
-    isEOF = file.eof();
+    if (bytesRead == 0) {
+      break; // No more data to process
+    }
+    
+    buffer[bytesRead] = '\0'; // Null-terminate the buffer
     
     // Process this chunk
     std::string chunk(buffer, bytesRead);
-    std::vector<Token> chunkTokens = lex.tokenize(chunk, isEOF);
-    
-    // Extract and display lines for readability
-    size_t lineStart = 0;
-    for (size_t i = 0; i < chunk.size(); i++) {
-      if (chunk[i] == '\n' || i == chunk.size() - 1) {
-        // Complete the current line
-        currentLine += chunk.substr(lineStart, i - lineStart + (i == chunk.size() - 1 ? 1 : 0));
-        std::cout << currentLine << std::endl;
-        
-        // Reset for next line
-        currentLine.clear();
-        lineStart = i + 1;
-        lineCount++;
-      }
-    }
-    
-    // Handle incomplete line at end of chunk
-    if (lineStart < chunk.size()) {
-      currentLine = chunk.substr(lineStart);
-    }
+    std::vector<Token> chunkTokens = lex.tokenize(chunk);
     
     // Add tokens to our collection
     allTokens.insert(allTokens.end(), chunkTokens.begin(), chunkTokens.end());
   }
   
-  // Get any final tokens including EOF
-  if (isEOF) {
-    std::vector<Token> finalTokens = lex.eof();
-    allTokens.insert(allTokens.end(), finalTokens.begin(), finalTokens.end());
-  }
+  // Get final EOF token
+  std::vector<Token> eof_tokens = lex.eof();
+  allTokens.insert(allTokens.end(), eof_tokens.begin(), eof_tokens.end());
   
   file.close();
   
