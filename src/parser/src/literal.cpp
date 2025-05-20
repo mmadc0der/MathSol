@@ -2,8 +2,8 @@
 
 template<typename T>
 T Literal<T>::value() {
-  if (!std::is_null_pointer(value_)) value_ = parse_(sourse_)
-  return value_;
+  if (not Literal<T>::value_) Literal<T>::value_ = parse_(Literal<T>::sourse_);
+  return Literal<T>::value_;
 }
 
 template<>

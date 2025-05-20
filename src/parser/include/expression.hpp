@@ -9,24 +9,24 @@
 template<typename T>
 class IExpression {
   public:
-    T virtual evaluate() const = 0;
+    T virtual evaluate() = 0;
 };
 
 template<typename T>
-class LiteralExpression : public IExpression {
+class LiteralExpression : public IExpression<T> {
   public:
     LiteralExpression(Literal<T>& literal_) : literal_(literal_) {};
-    T evaluate() const override;
+    T evaluate() override;
   
   private:
     Literal<T> literal_;
 };
 
-template<typename T, typename L, typename R>
-class BinaryExpression : public IExpression<T> {
+template<typename L, typename R>
+class BinaryExpression : public IExpression<L> {
   public:
-    BinaryExpression(Literal<T>* left, Literal<T>* right, const Token& operator_) : left_(left), right_(right), operator_(operator_) {};
-    std::variant<T, L, R> evaluate() const override;
+    BinaryExpression(IExpression<L>* left, IExpression<L>* right, const Token& operator_) : left_(left), right_(right), operator_(operator_) {};
+    std::variant<bool, L, R> evaluate() override;
 
   private:
     IExpression<L>* left_;
