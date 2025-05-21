@@ -6,7 +6,8 @@
 #include <vector>
 
 #include "lexer/include/lexer.hpp"
-//#include "parser/include/parser.hpp"
+#include "parser/include/parser.hpp"
+#include "parser/include/ast_printer.hpp"
 
 // consts
 #define VERSION "0.1.0"

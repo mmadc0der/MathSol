@@ -42,10 +42,35 @@ void runInteractiveMode() {
       std::cout << "\n";
     }
     
-    // Show parse tree if requested
-    if (showParseTree) {
-      // TODO: parse tree implementation
-      std::cout << "Parse tree will be implemented later\n";
+    // Парсинг и вывод дерева (если нужно)
+    if (!tokens.empty() && !(tokens.size() == 1 && tokens[0].getType() == TokenType::_EOF)) {
+      Parser parser(tokens); // Создаем парсер с полученными токенами
+      std::vector<std::unique_ptr<IStatement>> statements = parser.parse();
+
+      // TODO: Добавить проверку parser.hasError() когда метод будет доступен
+      // if (parser.hasError()) {
+      //     std::cerr << "Parsing errors occurred.\n";
+      // }
+
+      if (showParseTree /*&& !parser.hasError()*/) {
+        if (!statements.empty() || (tokens.size() > 1 || (tokens.size()==1 && tokens[0].getType() != TokenType::_EOF) )) {
+          AstPrinter printer;
+          std::cout << "--- AST Tree ---\n";
+          std::cout << printer.print(statements); // Печатаем дерево
+          std::cout << "------------------\n";
+        } /*else if (parser.hasError())*/ else if (false) { // Временно, пока нет parser.hasError()
+          std::cout << "Parsing resulted in errors, no AST to show.\n";
+        } else {
+          std::cout << "Input resulted in no statements to display in AST.\n";
+        }
+      }
+
+      // TODO: Здесь будет вычисление выражений из statements
+      // for (const auto& stmt : statements) {
+      //     if (stmt /*&& !parser.hasError()*/) {
+      //         // stmt->execute(env); // или evaluate и printValue
+      //     }
+      // }
     }
     std::cout << "mathsol> ";
   }
@@ -74,15 +99,28 @@ void runCommand(const std::string& command) {
     std::cout << "\n";
   }
   
-  // Show parse tree if requested
-  if (showParseTree) {
-    // TODO: parse tree implementation
-    std::cout << "Parse tree will be implemented later\n";
+  // Парсинг и вывод дерева (если нужно)
+  if (!tokens.empty() && !(tokens.size() == 1 && tokens[0].getType() == TokenType::_EOF)) {
+    Parser parser(tokens);
+    std::vector<std::unique_ptr<IStatement>> statements = parser.parse();
+
+    // TODO: Добавить проверку parser.hasError()
+    if (showParseTree /*&& !parser.hasError()*/) {
+      if (!statements.empty() || (tokens.size() > 1 || (tokens.size()==1 && tokens[0].getType() != TokenType::_EOF) )) {
+        AstPrinter printer;
+        std::cout << "--- AST Tree ---\n";
+        std::cout << printer.print(statements);
+        std::cout << "------------------\n";
+      } /*else if (parser.hasError())*/ else if (false) { // Временно, пока нет parser.hasError()
+        std::cout << "Parsing resulted in errors, no AST to show.\n";
+      } else {
+        std::cout << "Input resulted in no statements to display in AST.\n";
+      }
+    }
+
+    // TODO: Здесь будет вычисление выражений из statements
+    // for (const auto& stmt : statements) { ... }
   }
-  
-  // TODO: Execute when parser is implemented
-  // Parser parser = Parser();
-  // parser.parse(tokens);
 }
 
 // Execute code from file [filepath]
@@ -94,7 +132,6 @@ void runFile(const std::string& fileName) {
   }
   
   Lexer lex = Lexer();
-  //Parser parser = Parser();
   
   std::vector<Token> allTokens;
   allTokens.reserve(256); // Initial capacity
@@ -134,15 +171,49 @@ void runFile(const std::string& fileName) {
     std::cout << "\n";
   }
   
-  // Parse all tokens once they're collected (when parser is ready)
-  // Parser parser = Parser();
-  // parser.parse(allTokens);
-  
-  // Show parse tree if requested
-  if (showParseTree) {
-    // TODO: parse tree implementation
-    std::cout << "Parse tree will be implemented later\n";
+  // Debug: Check allTokens before parsing block
+  std::cout << "DEBUG runFile: Before parsing block. allTokens.size() = " << allTokens.size() << std::endl;
+  if (!allTokens.empty()) {
+    std::cout << "DEBUG runFile: Last token type: " << allTokens.back() << std::endl;
   }
+
+  // Parse all tokens once they're collected (when parser is ready)
+  if (!allTokens.empty() && !(allTokens.size() == 1 && allTokens[0].getType() == TokenType::_EOF)) {
+    Parser parser(allTokens);
+    std::vector<std::unique_ptr<IStatement>> statements;
+    try {
+        std::cout << "Attempting to parse tokens...\n"; // Отладочный вывод
+        statements = parser.parse();
+        std::cout << "Parser returned " << statements.size() << " statements\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught during parsing in runFile: " << e.what() << '\n';
+        // Можно добавить return или обработку, чтобы не продолжать с пустыми statements
+        return; // Выходим из runFile при ошибке парсинга
+    } catch (...) {
+        std::cerr << "Unknown exception caught during parsing in runFile.\n";
+        return; // Выходим из runFile при неизвестной ошибке
+    }
+
+    // TODO: Добавить проверку parser.hasError()
+    if (showParseTree /*&& !parser.hasError()*/) {
+      if (!statements.empty() || (allTokens.size() > 1 || (allTokens.size()==1 && allTokens[0].getType() != TokenType::_EOF) )) {
+        AstPrinter printer;
+        std::cout << "--- AST Tree ---\n";
+        std::cout << printer.print(statements);
+        std::cout << "------------------\n";
+      } /*else if (parser.hasError())*/ else if (false) { // Временно, пока нет parser.hasError()
+        std::cout << "Parsing resulted in errors, no AST to show.\n";
+      } else {
+        std::cout << "File content resulted in no statements to display in AST.\n";
+      }
+    }
+
+    // TODO: Здесь будет вычисление выражений из statements
+    // for (const auto& stmt : statements) { ... }
+  } else if (showParseTree) {
+    std::cout << "File is empty or resulted in no tokens to parse for AST.\n";
+  }
+
 }
 
 // Process short argument sequence [-abc] and return true if the sequence contains option that requires parameters
